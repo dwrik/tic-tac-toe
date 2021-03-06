@@ -1,0 +1,49 @@
+* {
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+:root {
+    font-family: monospace;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header {
+    padding: 20px;
+    font-size: 3em;
+    text-align: center;
+}
+
+.gameboard-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: repeat(3, 150px);
+    border: 2px solid black;
+}
+
+.buttons {
+    margin: 20px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: gainsboro;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.buttons:hover {
+    background-color: lightsteelblue;
+}
