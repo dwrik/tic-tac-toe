@@ -1,10 +1,10 @@
 * {
-    font-family: monospace;
+    font-family: stick, sans-serif;
     box-sizing: border-box;
 }
 
 :root {
-    font-family: monospace;
+    font-family: stick, sans-serif;
 }
 
 .container {
@@ -16,7 +16,7 @@
 }
 
 .header {
-    padding: 20px;
+    padding: 30px;
     font-size: 3em;
     text-align: center;
 }
@@ -38,26 +38,57 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 300ms;
-    border: 1px solid black;
+    transition: all 100ms;
     border-radius: 15px;
     cursor: pointer;
     font-size: 3em;
+    background: linear-gradient(45deg, #1f4037, #99f2c8);
+    color: white;
 }
 
-.square:hover {
-    background-color: gainsboro;
+.square:active {
+    transform: scale(0.95);
 }
 
 .buttons {
     margin: 20px;
     padding: 10px;
     cursor: pointer;
-    background-color: gainsboro;
-    border: 1px solid black;
+    font-size: 1.5em;
+    color: white;
+    background-color: hsl(0, 60%, 68%);
+    border: 1px solid transparent;
     border-radius: 5px;
 }
 
 .buttons:hover {
-    background-color: lightsteelblue;
+    background-color: hsl(0, 60%, 58%);
+}
+
+@media (max-width: 500px) {
+    .gameboard {
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+    }
+    .square {
+        font-size: 2em;
+        border-radius: 10px;
+    }
+    .buttons {
+        font-size: 1.25em;
+    }
+}
+
+@media (max-width: 350px) {
+    .gameboard {
+        grid-template-columns: repeat(3, 50px);
+        grid-template-rows: repeat(3, 50px);
+    }
+    .square {
+        font-size: 1.25em;
+        border-radius: 5px;
+    }
+    .buttons {
+        font-size: 1em;
+    }
 }
