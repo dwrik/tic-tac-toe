@@ -86,8 +86,10 @@ const displayController = (() => {
 
     const _boardElement = document.querySelector('.gameboard');
     const _resetButton = document.querySelector('#reset');
+    const _playAgainButton = document.querySelector('#modal-button');
 
     _resetButton.addEventListener('click', (event) => game.resetGame(event));
+    _playAgainButton.addEventListener('click', (event) => game.resetGame(event));
 
     const renderGameBoard = () => {
         _removeExistingBoard();
@@ -135,6 +137,9 @@ const game = (() => {
     let currPlayer;
 
     const resetGame = (event) => {
+        if (event.target.id === 'modal-button') {
+            _hideModal();
+        }
         currPlayer = playerB;
         gameBoard.resetBoard(event);
         displayController.renderGameBoard();
@@ -143,8 +148,7 @@ const game = (() => {
     const setPlay = (row, col) => {
         _swapPlayer();
 
-        // if occupied undo the swap so that
-        // it's still the currPlayer's turn
+        // if occupied undo the swap
         if (gameBoard.isSquareOccupied(row, col)) {
             _swapPlayer();
             return;
@@ -154,15 +158,34 @@ const game = (() => {
         displayController.renderGameBoard();
 
         const result = gameBoard.checkForWinner() ?? 'NONE';
-        switch (result) {
-            case 'X':    break;
-            case 'O':    break;
-            case 'TIE':  break;
-            case 'NONE': break;
-        }
+        if (result === 'NONE') return;
+        _gameOver(result);
     };
 
-    // private helper
+    const _gameOver = (winner) => {
+        _setModalText(winner);
+        _hideModal();
+    };
+
+    // private helpers
+
+    const _setModalText = (winner) => {
+        let resultText = '';
+
+        if (winner === 'TIE') {
+            resultText = `It's a ${winner}!`;
+        } else {
+            resultText = `Player ${winner} wins!`;
+        }
+
+        const modalBody = document.querySelector('.modal-body');
+        modalBody.innerHTML = resultText;
+    };
+
+    const _hideModal = () => {
+        const modal = document.querySelector('.modal');
+        modal.classList.toggle('modal-hidden');
+    };
 
     const _swapPlayer = () => {
         currPlayer = (currPlayer === playerB)? playerA : playerB;
