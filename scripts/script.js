@@ -73,7 +73,6 @@ const gameBoard = (() => {
 const Player = (playerName, playerToken) => {
     const _name = playerName;
     const _token = playerToken;
-
     const getName = () => _name;
     const getToken = () => _token;
 
@@ -83,9 +82,8 @@ const Player = (playerName, playerToken) => {
 
 // displayController module
 const displayController = (() => {
-
-    const _boardElement = document.querySelector('.gameboard');
     const _resetButton = document.querySelector('#reset');
+    const _boardElement = document.querySelector('.gameboard');
     const _playAgainButton = document.querySelector('#modal-button');
 
     _resetButton.addEventListener('click', (event) => game.resetGame(event));
@@ -104,7 +102,28 @@ const displayController = (() => {
         }
     };
 
-    // helpers
+    const setPlayerTurnText = (player) => {
+        const playerTurn = document.querySelector('.player-turn');
+        playerTurn.innerHTML = `Player ${player.getToken()}'s turn`;
+    };
+
+    const setModalText = (winner) => {
+        let resultText = '';
+        if (winner === 'TIE') {
+            resultText = `It's a ${winner}!`;
+        } else {
+            resultText = `Player ${winner} wins!`;
+        }
+        const modalBody = document.querySelector('.modal-body');
+        modalBody.innerHTML = resultText;
+    };
+
+    const hideModal = () => {
+        const modal = document.querySelector('.modal');
+        modal.classList.toggle('modal-hidden');
+    };
+
+    // private helpers
 
     const _removeExistingBoard = () => {
         const boardSquares = [ ...document.querySelectorAll('.square') ];
@@ -125,12 +144,16 @@ const displayController = (() => {
         game.setPlay(row, col);
     };
 
-    return { renderGameBoard };
+    return {
+        renderGameBoard,
+        setModalText,
+        setPlayerTurnText,
+        hideModal
+    };
 })();
 
 
 const game = (() => {
-
     const playerA = Player('Jim', 'X');
     const playerB = Player('Jon', 'O');
 
@@ -138,16 +161,15 @@ const game = (() => {
 
     const resetGame = (event) => {
         if (event.target.id === 'modal-button') {
-            _hideModal();
+            displayController.hideModal();
         }
-        currPlayer = playerB;
+        currPlayer = playerA;
         gameBoard.resetBoard(event);
         displayController.renderGameBoard();
+        displayController.setPlayerTurnText(currPlayer);
     };
 
     const setPlay = (row, col) => {
-        _swapPlayer();
-
         // if occupied undo the swap
         if (gameBoard.isSquareOccupied(row, col)) {
             _swapPlayer();
@@ -155,36 +177,22 @@ const game = (() => {
         }
 
         gameBoard.setSquare(row, col, currPlayer.getToken());
+        const result = gameBoard.checkForWinner();
         displayController.renderGameBoard();
 
-        const result = gameBoard.checkForWinner() ?? 'NONE';
-        if (result === 'NONE') return;
-        _gameOver(result);
-    };
+        if (result !== null) {
+            _gameOver(result);
+        }
 
-    const _gameOver = (winner) => {
-        _setModalText(winner);
-        _hideModal();
+        _swapPlayer();
+        displayController.setPlayerTurnText(currPlayer);
     };
 
     // private helpers
 
-    const _setModalText = (winner) => {
-        let resultText = '';
-
-        if (winner === 'TIE') {
-            resultText = `It's a ${winner}!`;
-        } else {
-            resultText = `Player ${winner} wins!`;
-        }
-
-        const modalBody = document.querySelector('.modal-body');
-        modalBody.innerHTML = resultText;
-    };
-
-    const _hideModal = () => {
-        const modal = document.querySelector('.modal');
-        modal.classList.toggle('modal-hidden');
+    const _gameOver = (winner) => {
+        displayController.setModalText(winner);
+        displayController.hideModal();
     };
 
     const _swapPlayer = () => {
