@@ -1,22 +1,26 @@
 // gameBoard module
 const gameBoard = (() => {
-    let _board = [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', '']
-    ];
+    let _board;
 
     const getSquare = (x, y) => {
         return _board[x][y];
     };
 
     const setSquare = (x, y, value) => {
-        if (_board[x][y] !== ' ') return false;
         _board[x][y] = value;
     };
 
     const isSquareOccupied = (x, y) => {
         return _board[x][y].length > 0;
+    };
+
+    const resetBoard = (event) => {
+        if (event === undefined) return;
+        _board = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', ''],
+        ];
     };
 
     const checkForWinner = () => {
@@ -52,30 +56,39 @@ const gameBoard = (() => {
         }
 
         // tie game
-        return 'tie';
+        return 'TIE';
     };
 
-    return { getSquare, setSquare, isSquareOccupied, checkForWinner };
+    return {
+        getSquare,
+        setSquare,
+        resetBoard,
+        isSquareOccupied,
+        checkForWinner,
+    };
 })();
 
 
 // Player factory
 const Player = (playerName, playerToken) => {
-    const name = playerName;
-    const token = playerToken;
+    const _name = playerName;
+    const _token = playerToken;
 
-    const getName = () => name;
-    const getToken = () => token;
+    const getName = () => _name;
+    const getToken = () => _token;
+
+    return { getName, getToken };
 };
 
 
 // displayController module
 const displayController = (() => {
 
-    // the gameboard element
     const _boardElement = document.querySelector('.gameboard');
+    const _resetButton = document.querySelector('#reset');
 
-    // render board from array in gameboard module
+    _resetButton.addEventListener('click', (event) => game.resetGame(event));
+
     const renderGameBoard = () => {
         _removeExistingBoard();
         for (let row=0; row<3; row++) {
@@ -89,12 +102,12 @@ const displayController = (() => {
         }
     };
 
-    // private helpers
+    // helpers
 
     const _removeExistingBoard = () => {
         const boardSquares = [ ...document.querySelectorAll('.square') ];
         boardSquares.forEach((square) => _boardElement.removeChild(square));
-    }
+    };
 
     const _getSquareElement = (row, col, value) => {
         const div = document.createElement('div');
@@ -103,25 +116,64 @@ const displayController = (() => {
         div.id = `${row}-${col}`;
         div.innerHTML = value;
         return div;
-    }
+    };
 
     const _handleClick = (event) => {
         const [ row, col ] = event.target.id.split('-');
+        game.setPlay(row, col);
     };
 
     return { renderGameBoard };
-
 })();
 
+
 const game = (() => {
+
     const playerA = Player('Jim', 'X');
     const playerB = Player('Jon', 'O');
 
-    const play = () => {
-        while (gameboard.checkForWinner() === null) {
+    let currPlayer;
+
+    const resetGame = (event) => {
+        currPlayer = playerB;
+        gameBoard.resetBoard(event);
+        displayController.renderGameBoard();
+    };
+
+    const setPlay = (row, col) => {
+        _swapPlayer();
+
+        // if occupied undo the swap so that
+        // it's still the currPlayer's turn
+        if (gameBoard.isSquareOccupied(row, col)) {
+            _swapPlayer();
+            return;
+        }
+
+        gameBoard.setSquare(row, col, currPlayer.getToken());
+        displayController.renderGameBoard();
+
+        const result = gameBoard.checkForWinner() ?? 'NONE';
+        switch (result) {
+            case 'X':    break;
+            case 'O':    break;
+            case 'TIE':  break;
+            case 'NONE': break;
         }
     };
 
+    // private helper
+
+    const _swapPlayer = () => {
+        currPlayer = (currPlayer === playerB)? playerA : playerB;
+    };
+
+    return { resetGame, setPlay };
 })();
 
-displayController.renderGameBoard();
+// game can be reset with only game.resetGame which resets
+// the entire gameboard, the display and the players. Event
+// listener has been added to ensure that the gameboard cannot
+// be reset from the console which only resets the board and not
+// the display or the players
+window.addEventListener('load', (event) => game.resetGame(event));
