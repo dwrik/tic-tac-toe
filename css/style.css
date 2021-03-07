@@ -9,6 +9,7 @@
 
 .container {
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,6 +66,56 @@
     background-color: hsl(0, 60%, 58%);
 }
 
+.modal {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    animation-name: fadeIn;
+    animation-duration: 400ms;
+    backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.modal-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    justify-content: center;
+    border-radius: 10px;
+    border: 2px solid grey;
+    align-items: center;
+    width: 400px;
+    height: 200px;
+}
+
+.modal-body {
+    font-size: 2em;
+}
+
+#modal-button {
+    background-color:hsl(150, 60%, 58%);
+}
+
+#modal-button:hover {
+    background-color:hsl(150, 60%, 38%);
+}
+
+.modal-hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 @media (max-width: 500px) {
     .gameboard {
         grid-template-columns: repeat(3, 100px);
@@ -76,6 +127,13 @@
     }
     .buttons {
         font-size: 1.25em;
+    }
+    .modal-content {
+        width: 300px;
+        height: 200px;
+    }
+    .modal-body {
+        font-size: 1.5em;
     }
 }
 
@@ -90,5 +148,16 @@
     }
     .buttons {
         font-size: 1em;
+    }
+    .modal-content {
+        width: 200px;
+        height: 100px;
+    }
+    .modal-body {
+        font-size: 1em;
+    }
+    #modal-button {
+        margin: 10px;
+        padding: 5px;
     }
 }
