@@ -1,3 +1,4 @@
+// gameBoard module
 const gameBoard = (() => {
     let _board = [
         ['', '', ''],
@@ -10,7 +11,7 @@ const gameBoard = (() => {
     };
 
     const setSquare = (x, y, value) => {
-        if (_board[x][y] !== ' ') return;
+        if (_board[x][y] !== ' ') return false;
         _board[x][y] = value;
     };
 
@@ -57,51 +58,70 @@ const gameBoard = (() => {
     return { getSquare, setSquare, isSquareOccupied, checkForWinner };
 })();
 
-const displayController = ((firstPlayer, secondPlayer) => {
-    const _playerA = firstPlayer;
-    const _playerB = secondPlayer;
+
+// Player factory
+const Player = (playerName, playerToken) => {
+    const name = playerName;
+    const token = playerToken;
+
+    const getName = () => name;
+    const getToken = () => token;
+};
+
+
+// displayController module
+const displayController = (() => {
+
+    // the gameboard element
     const _boardElement = document.querySelector('.gameboard');
 
     // render board from array in gameboard module
     const renderGameBoard = () => {
+        _removeExistingBoard();
         for (let row=0; row<3; row++) {
             for (let col=0; col<3; col++) {
                 const squareElement = _getSquareElement(
                     row,
                     col,
                     gameBoard.getSquare(row, col));
-
                 _boardElement.appendChild(squareElement);
             }
         }
     };
 
-    // private helper
+    // private helpers
+
+    const _removeExistingBoard = () => {
+        const boardSquares = [ ...document.querySelectorAll('.square') ];
+        boardSquares.forEach((square) => _boardElement.removeChild(square));
+    }
+
     const _getSquareElement = (row, col, value) => {
         const div = document.createElement('div');
-        // div.addEventListener('click', playerPlays);
+        div.addEventListener('click', _handleClick);
         div.classList.add('square');
         div.id = `${row}-${col}`;
         div.innerHTML = value;
         return div;
     }
 
-    /*
-    const play = () => {
-        while (gameboard.checkForWinner() === null) {
-        }
+    const _handleClick = (event) => {
+        const [ row, col ] = event.target.id.split('-');
     };
-    */
 
     return { renderGameBoard };
 
 })();
 
-const Player = (playerName, playerToken) => {
-    const name = playerName;
-    const token = playerToken;
-    const getName = () => name;
-    const getToken = () => token;
-};
+const game = (() => {
+    const playerA = Player('Jim', 'X');
+    const playerB = Player('Jon', 'O');
+
+    const play = () => {
+        while (gameboard.checkForWinner() === null) {
+        }
+    };
+
+})();
 
 displayController.renderGameBoard();
