@@ -170,7 +170,6 @@ const game = (() => {
     };
 
     const setPlay = (row, col) => {
-        // if occupied undo the swap
         if (gameBoard.isSquareOccupied(row, col)) {
             return;
         }
